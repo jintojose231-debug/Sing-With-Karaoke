@@ -254,12 +254,12 @@
             min-width: 100px;
         }
         
-        .android-note {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            font-size: 0.9rem;
+        .audio-warning {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff4444;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
         }
         
         @media (max-width: 768px) {
@@ -330,9 +330,14 @@
             </button>
             
             <div class="player" id="player" style="display: none;">
+                <div class="audio-warning" id="audioWarning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <strong>Important:</strong> Use headphones to prevent audio feedback! The music will continue playing while recording.
+                </div>
+                
                 <div class="status-message" id="statusMessage">Ready to sing! Click the red microphone button to start recording.</div>
                 <div class="recording-indicator" id="recordingIndicator">
-                    <i class="fas fa-circle"></i> Recording in progress... Music and voice are being mixed together!
+                    <i class="fas fa-circle"></i> Recording in progress... You can hear the music in your headphones!
                 </div>
                 
                 <div class="volume-controls">
@@ -373,17 +378,6 @@
                 </div>
                 
                 <div class="recordings-list" id="recordingsList"></div>
-                
-                <div class="android-note">
-                    <h4><i class="fab fa-android"></i> Android App Note</h4>
-                    <p>This web app works on Android browsers! For better performance, you can convert it to a native Android app using:</p>
-                    <ul style="text-align: left; margin: 10px 0; padding-left: 20px;">
-                        <li><strong>WebView</strong> - Wrap this HTML in an Android WebView</li>
-                        <li><strong>Capacitor/Cordova</strong> - Convert web app to native app</li>
-                        <li><strong>React Native</strong> - Rewrite using native audio APIs</li>
-                    </ul>
-                    <p><strong>Native benefits:</strong> Better microphone access, background audio, file system access</p>
-                </div>
             </div>
         </section>
     </div>
@@ -430,6 +424,7 @@
         const recordingsList = document.getElementById('recordingsList');
         const musicVolume = document.getElementById('musicVolume');
         const voiceVolume = document.getElementById('voiceVolume');
+        const audioWarning = document.getElementById('audioWarning');
         
         // Event Listeners
         selectTrackBtn.addEventListener('click', () => {
@@ -521,15 +516,8 @@
         }
         
         function loadYouTubeAudio(videoId) {
-            // This is a simplified implementation
-            // In production, you would need to:
-            // 1. Use the YouTube Data API with a server-side proxy
-            // 2. Handle CORS issues properly
-            // 3. Extract and process the audio stream
-            
             statusMessage.textContent = "YouTube integration requires server-side processing for full implementation. For now, please use local audio files.";
             
-            // For demonstration, we'll create a placeholder
             setTimeout(() => {
                 statusMessage.textContent = "YouTube audio loaded (simulation). Click START TO SING when ready.";
             }, 1000);
@@ -667,7 +655,6 @@
             
             if (wasRecording) {
                 statusMessage.textContent = "Ready to record from beginning";
-                // Automatically restart recording after a brief delay
                 setTimeout(() => {
                     if (!isRecording) {
                         startRecording();
@@ -723,14 +710,17 @@
                 playAudio();
             }
             
-            // Request microphone access
+            // Request microphone access with echo cancellation disabled
+            // This is key to prevent the browser from muting other audio
             navigator.mediaDevices.getUserMedia({ 
                 audio: {
-                    echoCancellation: true,
-                    noiseSuppression: true,
-                    autoGainControl: false,
+                    echoCancellation: false,  // Disable echo cancellation
+                    noiseSuppression: false,  // Disable noise suppression  
+                    autoGainControl: false,   // Disable auto gain
                     channelCount: 1,
-                    sampleRate: 44100
+                    sampleRate: 44100,
+                    // Try to prevent audio focus stealing
+                    latency: 0.01
                 } 
             })
             .then(function(stream) {
@@ -739,10 +729,10 @@
                 // Create MediaStreamSource from microphone
                 microphoneSource = audioContext.createMediaStreamSource(stream);
                 
-                // Connect microphone to both output and mixed destination
+                // Connect microphone ONLY to mixed destination (not to speakers)
+                // This prevents feedback and allows music to continue playing
                 microphoneSource.connect(microphoneGain);
-                microphoneGain.connect(audioContext.destination); // For monitoring
-                microphoneGain.connect(mixedDestination); // For recording
+                microphoneGain.connect(mixedDestination); // For recording only
                 
                 // Set up MediaRecorder to capture the mixed stream (music + voice)
                 mediaRecorder = new MediaRecorder(mixedDestination.stream);
@@ -762,13 +752,16 @@
                 recordBtn.innerHTML = '<i class="fas fa-square"></i>';
                 recordBtn.title = "Stop Recording";
                 recordingIndicator.style.display = 'block';
-                statusMessage.textContent = "Recording started! Music and voice are being mixed together in the recording.";
+                audioWarning.style.display = 'block';
+                statusMessage.textContent = "Recording started! You can hear the music in your headphones and sing along.";
+                
+                // Force audio context to stay active
+                keepAudioAlive();
                 
             })
             .catch(function(err) {
                 console.error("Microphone access error:", err);
                 
-                // Provide specific error messages
                 if (err.name === 'NotAllowedError') {
                     statusMessage.textContent = "Microphone permission denied. Please allow microphone access in your browser settings and reload the page.";
                 } else if (err.name === 'NotFoundError') {
@@ -779,6 +772,21 @@
                     statusMessage.textContent = "Error accessing microphone: " + err.message;
                 }
             });
+        }
+        
+        function keepAudioAlive() {
+            // Create a silent oscillator to keep audio context active
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = 0; // Silent
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.start();
+            
+            // Stop after a short time
+            setTimeout(() => {
+                oscillator.stop();
+            }, 100);
         }
         
         function stopRecording() {
@@ -802,6 +810,7 @@
                 recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                 recordBtn.title = "Start Recording";
                 recordingIndicator.style.display = 'none';
+                audioWarning.style.display = 'none';
                 statusMessage.textContent = "Recording stopped. Processing your mixed performance...";
                 
                 // Process the recording
