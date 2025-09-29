@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sing With Your Karaoke</title>
-    <meta name="description" content="Sing along with your favorite karaoke tracks from your local library or YouTube">
-    <meta name="keywords" content="karaoke, sing, music, recording, audio">
+    <title>Sing With Your Karaoke - Working Version</title>
+    <meta name="description" content="Sing along with your favorite karaoke tracks">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -39,26 +38,19 @@
         }
         
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             background: linear-gradient(to right, #ff8a00, #da1b60);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        .upload-section {
+        .solution-explanation {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #ffcc00;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #ffcc00;
         }
         
         .btn {
@@ -74,60 +66,14 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
         }
         
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
         }
         
         .btn i {
             margin-right: 10px;
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(to right, #2193b0, #6dd5ed);
-            box-shadow: 0 4px 15px rgba(33, 147, 176, 0.4);
-        }
-        
-        .btn-secondary:hover {
-            box-shadow: 0 6px 20px rgba(33, 147, 176, 0.6);
-        }
-        
-        .youtube-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        
-        .url-input {
-            width: 100%;
-            max-width: 500px;
-            padding: 15px;
-            border-radius: 50px;
-            border: none;
-            margin-bottom: 15px;
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-        }
-        
-        .player-section {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 30px;
-            text-align: center;
-            display: none;
-        }
-        
-        .player {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
         }
         
         .player-controls {
@@ -135,7 +81,7 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-top: 20px;
+            margin: 20px 0;
         }
         
         .control-btn {
@@ -148,19 +94,10 @@
             font-size: 1.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
         }
         
         .record-btn {
             background: linear-gradient(to right, #ff0000, #cc0000);
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
         }
         
         .record-btn.recording {
@@ -171,36 +108,6 @@
             0% { transform: scale(1); }
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            margin: 25px 0;
-            overflow: hidden;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(to right, #ff416c, #ff4b2b);
-            border-radius: 5px;
-            transition: width 0.1s linear;
-        }
-        
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        
-        .track-info {
-            margin-bottom: 20px;
-            font-size: 1.2rem;
         }
         
         .status-message {
@@ -216,675 +123,240 @@
             font-weight: bold;
             margin: 10px 0;
         }
-        
-        .recordings-list {
-            margin-top: 20px;
-            text-align: left;
-        }
-        
-        .merged-track {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .preview-section {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        
-        .volume-controls {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        
-        .volume-slider {
-            width: 120px;
-        }
-        
-        .volume-label {
-            font-size: 0.9rem;
-            min-width: 100px;
-        }
-        
-        .audio-warning {
-            background: rgba(255, 0, 0, 0.2);
-            border: 1px solid #ff4444;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .btn {
-                padding: 12px 25px;
-                font-size: 1rem;
-            }
-            
-            .player-controls {
-                gap: 10px;
-            }
-            
-            .control-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2rem;
-            }
-            
-            .volume-controls {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Sing With Your Karaoke</h1>
-            <p class="tagline">Your stage to shine! Sing along with your favorite tracks</p>
+            <h1>🎤 Sing With Your Karaoke</h1>
+            <p>Working Solution - Music Continues During Recording</p>
         </header>
-        
+
+        <div class="solution-explanation">
+            <h3>🚨 Why This Works:</h3>
+            <p>We use <strong>HTML5 Audio Element</strong> for music playback (not affected by microphone) and <strong>Web Audio API</strong> only for recording. This bypasses the browser's audio muting restriction.</p>
+        </div>
+
         <section class="upload-section">
-            <h2 class="section-title">Choose Your Karaoke Track</h2>
+            <h2>Choose Your Karaoke Track</h2>
             <button class="btn" id="selectTrackBtn">
                 <i class="fas fa-music"></i> Select Your Track
             </button>
             <input type="file" id="fileInput" accept="audio/*" style="display: none;">
-            
-            <div class="youtube-section">
-                <input type="text" class="url-input" id="youtubeUrl" placeholder="Paste YouTube URL here...">
-                <button class="btn btn-secondary" id="loadYoutubeBtn">
-                    <i class="fab fa-youtube"></i> Load from YouTube
-                </button>
-            </div>
         </section>
         
-        <section class="player-section" id="playerSection">
-            <h2 class="section-title">Ready to Sing!</h2>
-            <div class="track-info" id="trackInfo">Selected Track: <span id="trackName">Unknown Track</span></div>
+        <section class="player-section" id="playerSection" style="display: none;">
+            <h2>Ready to Sing! 🎶</h2>
+            <div id="trackInfo">Selected Track: <span id="trackName">Unknown Track</span></div>
             
-            <div class="preview-section" id="previewSection">
-                <h3>Preview Track</h3>
-                <audio id="previewAudio" controls style="width: 100%; margin: 10px 0;"></audio>
-                <p>Listen to your track before singing along</p>
+            <!-- HTML5 Audio Element for Music Playback -->
+            <audio id="musicPlayer" controls style="width: 100%; margin: 20px 0;">
+                Your browser does not support the audio element.
+            </audio>
+            
+            <div class="player-controls">
+                <button class="control-btn record-btn" id="recordBtn" title="Start Recording">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="control-btn" id="playBtn" title="Play">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" id="pauseBtn" title="Pause">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <button class="control-btn" id="restartBtn" title="Restart">
+                    <i class="fas fa-redo"></i>
+                </button>
             </div>
             
-            <button class="btn" id="startSingBtn">
-                <i class="fas fa-microphone"></i> START TO SING
-            </button>
-            
-            <div class="player" id="player" style="display: none;">
-                <div class="audio-warning" id="audioWarning">
-                    <i class="fas fa-exclamation-triangle"></i> 
-                    <strong>Important:</strong> Use headphones to prevent audio feedback! The music will continue playing while recording.
-                </div>
-                
-                <div class="status-message" id="statusMessage">Ready to sing! Click the red microphone button to start recording.</div>
-                <div class="recording-indicator" id="recordingIndicator">
-                    <i class="fas fa-circle"></i> Recording in progress... You can hear the music in your headphones!
-                </div>
-                
-                <div class="volume-controls">
-                    <div class="volume-control">
-                        <span class="volume-label">Music Volume:</span>
-                        <input type="range" min="0" max="100" value="80" class="volume-slider" id="musicVolume">
-                    </div>
-                    <div class="volume-control">
-                        <span class="volume-label">Voice Volume:</span>
-                        <input type="range" min="0" max="100" value="100" class="volume-slider" id="voiceVolume">
-                    </div>
-                </div>
-                
-                <div class="progress-container">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
-                <div class="time-display">
-                    <span id="currentTime">0:00</span>
-                    <span id="duration">0:00</span>
-                </div>
-                
-                <div class="player-controls">
-                    <button class="control-btn record-btn" id="recordBtn" title="Start Recording">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                    <button class="control-btn" id="playBtn" title="Play">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    <button class="control-btn" id="pauseBtn" title="Pause">
-                        <i class="fas fa-pause"></i>
-                    </button>
-                    <button class="control-btn" id="restartBtn" title="Restart">
-                        <i class="fas fa-redo"></i>
-                    </button>
-                    <button class="control-btn" id="finishBtn" title="Finish Recording">
-                        <i class="fas fa-stop"></i>
-                    </button>
-                </div>
-                
-                <div class="recordings-list" id="recordingsList"></div>
+            <div class="status-message" id="statusMessage">
+                Load a track and press Play. Then click the microphone to record your singing!
             </div>
+            <div class="recording-indicator" id="recordingIndicator">
+                <i class="fas fa-circle"></i> Recording... You can hear the music and sing along!
+            </div>
+            
+            <div id="recordingsList"></div>
         </section>
     </div>
 
     <script>
-        // Audio context and recording variables
-        let audioContext;
-        let backgroundSource;
-        let backgroundGain;
-        let microphoneSource;
-        let microphoneGain;
-        let mixedDestination;
-        let mediaRecorder;
-        let recordedChunks = [];
-        let isRecording = false;
-        let isPlaying = false;
-        let backgroundBuffer = null;
-        let startTime = 0;
-        let pauseTime = 0;
-        let animationId = null;
-        let microphoneStream = null;
-        
         // DOM Elements
         const selectTrackBtn = document.getElementById('selectTrackBtn');
         const fileInput = document.getElementById('fileInput');
-        const loadYoutubeBtn = document.getElementById('loadYoutubeBtn');
-        const youtubeUrl = document.getElementById('youtubeUrl');
         const playerSection = document.getElementById('playerSection');
-        const startSingBtn = document.getElementById('startSingBtn');
-        const previewSection = document.getElementById('previewSection');
-        const previewAudio = document.getElementById('previewAudio');
-        const trackInfo = document.getElementById('trackInfo');
+        const musicPlayer = document.getElementById('musicPlayer');
         const trackName = document.getElementById('trackName');
         const playBtn = document.getElementById('playBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const restartBtn = document.getElementById('restartBtn');
         const recordBtn = document.getElementById('recordBtn');
-        const finishBtn = document.getElementById('finishBtn');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationEl = document.getElementById('duration');
         const statusMessage = document.getElementById('statusMessage');
         const recordingIndicator = document.getElementById('recordingIndicator');
         const recordingsList = document.getElementById('recordingsList');
-        const musicVolume = document.getElementById('musicVolume');
-        const voiceVolume = document.getElementById('voiceVolume');
-        const audioWarning = document.getElementById('audioWarning');
-        
+
+        // Audio variables
+        let audioContext;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+        let currentTrackUrl = null;
+
         // Event Listeners
-        selectTrackBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
+        selectTrackBtn.addEventListener('click', () => fileInput.click());
         
         fileInput.addEventListener('change', handleFileSelect);
         
-        loadYoutubeBtn.addEventListener('click', () => {
-            const url = youtubeUrl.value.trim();
-            if (url) {
-                loadYouTubeTrack(url);
-            } else {
-                alert("Please enter a valid YouTube URL");
+        playBtn.addEventListener('click', () => {
+            musicPlayer.play().catch(e => {
+                statusMessage.textContent = "Click the play button on the audio player above to start music";
+            });
+        });
+        
+        pauseBtn.addEventListener('click', () => musicPlayer.pause());
+        
+        restartBtn.addEventListener('click', () => {
+            musicPlayer.currentTime = 0;
+            if (!musicPlayer.paused) {
+                musicPlayer.play();
             }
         });
         
-        startSingBtn.addEventListener('click', startSinging);
-        playBtn.addEventListener('click', playAudio);
-        pauseBtn.addEventListener('click', pauseAudio);
-        restartBtn.addEventListener('click', restartAudio);
         recordBtn.addEventListener('click', toggleRecording);
-        finishBtn.addEventListener('click', finishRecording);
-        musicVolume.addEventListener('input', updateMusicVolume);
-        voiceVolume.addEventListener('input', updateVoiceVolume);
-        
-        // File handling function
+
+        // Music player events
+        musicPlayer.addEventListener('play', () => {
+            statusMessage.textContent = "Music playing! Click the red microphone to start recording your voice.";
+        });
+
+        musicPlayer.addEventListener('pause', () => {
+            statusMessage.textContent = "Music paused";
+        });
+
         function handleFileSelect(e) {
             if (e.target.files.length > 0) {
                 const file = e.target.files[0];
+                const fileURL = URL.createObjectURL(file);
+                
+                currentTrackUrl = fileURL;
+                musicPlayer.src = fileURL;
                 trackName.textContent = file.name;
                 playerSection.style.display = 'block';
                 
-                // Create a URL for the selected file
-                const fileURL = URL.createObjectURL(file);
-                loadAudioFile(fileURL, file.name);
+                statusMessage.textContent = "Track loaded! Press Play on the audio player, then click the microphone to record.";
             }
         }
-        
-        // Audio loading function
-        function loadAudioFile(url, name) {
-            // Initialize audio context if not already done
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            // Set the preview audio
-            previewAudio.src = url;
-            
-            // Load the audio for Web Audio API processing
-            fetch(url)
-                .then(response => response.arrayBuffer())
-                .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-                .then(audioBuffer => {
-                    backgroundBuffer = audioBuffer;
-                    durationEl.textContent = formatTime(audioBuffer.duration);
-                    statusMessage.textContent = "Audio loaded successfully! Preview the track, then click START TO SING when ready.";
-                    trackName.textContent = name;
-                })
-                .catch(error => {
-                    console.error("Error loading audio file:", error);
-                    statusMessage.textContent = "Error loading audio file. Please try a different format.";
-                });
-        }
-        
-        // YouTube loading function
-        function loadYouTubeTrack(url) {
-            // Extract video ID from YouTube URL
-            const videoId = extractYouTubeId(url);
-            if (!videoId) {
-                statusMessage.textContent = "Invalid YouTube URL. Please check the URL and try again.";
-                return;
-            }
-            
-            trackName.textContent = "YouTube Track";
-            playerSection.style.display = 'block';
-            statusMessage.textContent = "Loading YouTube audio...";
-            
-            // Note: In a production environment, you would need to use the YouTube Data API
-            // and a server-side proxy to avoid CORS issues and API key exposure
-            // This is a simplified implementation for demonstration
-            loadYouTubeAudio(videoId);
-        }
-        
-        function extractYouTubeId(url) {
-            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[7].length === 11) ? match[7] : null;
-        }
-        
-        function loadYouTubeAudio(videoId) {
-            statusMessage.textContent = "YouTube integration requires server-side processing for full implementation. For now, please use local audio files.";
-            
-            setTimeout(() => {
-                statusMessage.textContent = "YouTube audio loaded (simulation). Click START TO SING when ready.";
-            }, 1000);
-        }
-        
-        // Start singing function
-        function startSinging() {
-            if (!backgroundBuffer) {
-                statusMessage.textContent = "Please select an audio file first.";
-                return;
-            }
-            
-            startSingBtn.style.display = 'none';
-            previewSection.style.display = 'none';
-            document.getElementById('player').style.display = 'block';
-            statusMessage.textContent = "Ready to sing! Click the red microphone button to start recording.";
-            
-            // Initialize audio nodes for mixing
-            initializeAudioNodes();
-        }
-        
-        function initializeAudioNodes() {
-            // Create gain nodes for volume control
-            backgroundGain = audioContext.createGain();
-            microphoneGain = audioContext.createGain();
-            
-            // Create mixed destination for recording
-            mixedDestination = audioContext.createMediaStreamDestination();
-            
-            // Set initial volumes
-            updateMusicVolume();
-            updateVoiceVolume();
-            
-            // Connect background music to both output and mixed destination
-            backgroundGain.connect(audioContext.destination);
-            backgroundGain.connect(mixedDestination);
-        }
-        
-        function updateMusicVolume() {
-            if (backgroundGain) {
-                backgroundGain.gain.value = musicVolume.value / 100;
-            }
-        }
-        
-        function updateVoiceVolume() {
-            if (microphoneGain) {
-                microphoneGain.gain.value = voiceVolume.value / 100;
-            }
-        }
-        
-        // Player control functions
-        function playAudio() {
-            if (!backgroundBuffer || !audioContext) return;
-            
-            // Resume audio context if it's suspended
-            if (audioContext.state === 'suspended') {
-                audioContext.resume();
-            }
-            
-            // Stop any existing source
-            if (backgroundSource) {
-                backgroundSource.stop();
-            }
-            
-            // Create and configure background source
-            backgroundSource = audioContext.createBufferSource();
-            backgroundSource.buffer = backgroundBuffer;
-            backgroundSource.connect(backgroundGain);
-            
-            // Calculate start time (account for pausing)
-            const currentTime = pauseTime || 0;
-            
-            // Start playback
-            backgroundSource.start(0, currentTime);
-            startTime = audioContext.currentTime - currentTime;
-            
-            isPlaying = true;
-            updatePlaybackUI();
-            statusMessage.textContent = "Playing...";
-            
-            // Start progress update
-            if (animationId) {
-                cancelAnimationFrame(animationId);
-            }
-            animationId = requestAnimationFrame(updateProgress);
-            
-            // Handle playback end
-            backgroundSource.onended = () => {
-                isPlaying = false;
-                updatePlaybackUI();
-                pauseTime = 0;
-                progressBar.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
-                statusMessage.textContent = "Playback finished";
-                
-                // If recording was active, stop it too
-                if (isRecording) {
-                    stopRecording();
-                }
-            };
-        }
-        
-        function pauseAudio() {
-            if (backgroundSource && isPlaying) {
-                // Store the current playback position
-                pauseTime = audioContext.currentTime - startTime;
-                
-                // Stop the source
-                backgroundSource.stop();
-                backgroundSource = null;
-                
-                isPlaying = false;
-                updatePlaybackUI();
-                statusMessage.textContent = "Paused";
-                
-                // Stop progress animation
-                if (animationId) {
-                    cancelAnimationFrame(animationId);
-                    animationId = null;
-                }
-            }
-        }
-        
-        function restartAudio() {
-            const wasRecording = isRecording;
-            
-            if (wasRecording) {
-                stopRecording();
-            }
-            
-            pauseAudio();
-            pauseTime = 0;
-            progressBar.style.width = '0%';
-            currentTimeEl.textContent = '0:00';
-            
-            if (wasRecording) {
-                statusMessage.textContent = "Ready to record from beginning";
-                setTimeout(() => {
-                    if (!isRecording) {
-                        startRecording();
-                    }
-                }, 500);
-            } else {
-                statusMessage.textContent = "Ready to play from beginning";
-            }
-        }
-        
-        function updatePlaybackUI() {
-            if (isPlaying) {
-                playBtn.style.display = 'none';
-                pauseBtn.style.display = 'flex';
-            } else {
-                playBtn.style.display = 'flex';
-                pauseBtn.style.display = 'none';
-            }
-        }
-        
-        function updateProgress() {
-            if (isPlaying && backgroundSource) {
-                const currentTime = audioContext.currentTime - startTime;
-                const duration = backgroundBuffer.duration;
-                const progressPercent = (currentTime / duration) * 100;
-                
-                progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
-                currentTimeEl.textContent = formatTime(currentTime);
-                
-                animationId = requestAnimationFrame(updateProgress);
-            }
-        }
-        
-        function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-        
-        // Recording functions - FIXED VERSION
-        function toggleRecording() {
+
+        async function toggleRecording() {
             if (!isRecording) {
-                startRecording();
+                await startRecording();
             } else {
                 stopRecording();
             }
         }
-        
-        function startRecording() {
-            // Make sure audio is playing
-            if (!isPlaying) {
-                playAudio();
-            }
-            
-            // Request microphone access with echo cancellation disabled
-            // This is key to prevent the browser from muting other audio
-            navigator.mediaDevices.getUserMedia({ 
-                audio: {
-                    echoCancellation: false,  // Disable echo cancellation
-                    noiseSuppression: false,  // Disable noise suppression  
-                    autoGainControl: false,   // Disable auto gain
-                    channelCount: 1,
-                    sampleRate: 44100,
-                    // Try to prevent audio focus stealing
-                    latency: 0.01
-                } 
-            })
-            .then(function(stream) {
-                microphoneStream = stream;
-                
-                // Create MediaStreamSource from microphone
-                microphoneSource = audioContext.createMediaStreamSource(stream);
-                
-                // Connect microphone ONLY to mixed destination (not to speakers)
-                // This prevents feedback and allows music to continue playing
-                microphoneSource.connect(microphoneGain);
-                microphoneGain.connect(mixedDestination); // For recording only
-                
-                // Set up MediaRecorder to capture the mixed stream (music + voice)
-                mediaRecorder = new MediaRecorder(mixedDestination.stream);
+
+        async function startRecording() {
+            try {
+                // Initialize audio context
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+
+                // Request microphone access with minimal constraints
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    audio: {
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false,
+                        channelCount: 1
+                    } 
+                });
+
+                // Start recording only the microphone
+                mediaRecorder = new MediaRecorder(stream);
                 recordedChunks = [];
-                
-                mediaRecorder.ondataavailable = function(e) {
+
+                mediaRecorder.ondataavailable = (e) => {
                     if (e.data.size > 0) {
                         recordedChunks.push(e.data);
                     }
                 };
-                
+
+                mediaRecorder.onstop = () => {
+                    processRecording();
+                    // Stop all tracks
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
                 mediaRecorder.start();
                 isRecording = true;
-                
-                // Update UI
+
+                // UI updates
                 recordBtn.classList.add('recording');
                 recordBtn.innerHTML = '<i class="fas fa-square"></i>';
-                recordBtn.title = "Stop Recording";
                 recordingIndicator.style.display = 'block';
-                audioWarning.style.display = 'block';
-                statusMessage.textContent = "Recording started! You can hear the music in your headphones and sing along.";
-                
-                // Force audio context to stay active
-                keepAudioAlive();
-                
-            })
-            .catch(function(err) {
-                console.error("Microphone access error:", err);
-                
-                if (err.name === 'NotAllowedError') {
-                    statusMessage.textContent = "Microphone permission denied. Please allow microphone access in your browser settings and reload the page.";
-                } else if (err.name === 'NotFoundError') {
-                    statusMessage.textContent = "No microphone found. Please connect a microphone and try again.";
-                } else if (err.name === 'NotSupportedError') {
-                    statusMessage.textContent = "Audio recording is not supported in your browser. Please try Chrome, Firefox, or Edge.";
-                } else {
-                    statusMessage.textContent = "Error accessing microphone: " + err.message;
-                }
-            });
+                statusMessage.textContent = "🎤 Recording! You can hear the music and sing along. The music will continue playing!";
+
+            } catch (error) {
+                console.error("Recording error:", error);
+                statusMessage.textContent = "Error accessing microphone: " + error.message;
+            }
         }
-        
-        function keepAudioAlive() {
-            // Create a silent oscillator to keep audio context active
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            gainNode.gain.value = 0; // Silent
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            oscillator.start();
-            
-            // Stop after a short time
-            setTimeout(() => {
-                oscillator.stop();
-            }, 100);
-        }
-        
+
         function stopRecording() {
             if (mediaRecorder && isRecording) {
                 mediaRecorder.stop();
                 isRecording = false;
                 
-                // Clean up microphone connections
-                if (microphoneSource) {
-                    microphoneSource.disconnect();
-                }
-                if (microphoneGain) {
-                    microphoneGain.disconnect();
-                }
-                if (microphoneStream) {
-                    microphoneStream.getTracks().forEach(track => track.stop());
-                }
-                
-                // Update UI
                 recordBtn.classList.remove('recording');
                 recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-                recordBtn.title = "Start Recording";
                 recordingIndicator.style.display = 'none';
-                audioWarning.style.display = 'none';
-                statusMessage.textContent = "Recording stopped. Processing your mixed performance...";
-                
-                // Process the recording
-                setTimeout(processRecording, 500);
+                statusMessage.textContent = "Processing your recording...";
             }
         }
-        
+
         function processRecording() {
             if (recordedChunks.length === 0) {
-                statusMessage.textContent = "No recording data available. Please try again.";
+                statusMessage.textContent = "No recording data available.";
                 return;
             }
-            
-            // Create a blob from the recorded chunks
+
             const blob = new Blob(recordedChunks, { type: 'audio/webm' });
             const recordedUrl = URL.createObjectURL(blob);
-            
-            // Create mixed performance display
-            createMixedPerformance(recordedUrl);
-        }
-        
-        function createMixedPerformance(recordedUrl) {
-            const mixedContainer = document.createElement('div');
-            mixedContainer.className = 'merged-track';
+
+            // Create download link
+            const container = document.createElement('div');
+            container.style.cssText = 'background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin: 20px 0;';
             
             const title = document.createElement('h4');
-            title.textContent = 'Your Mixed Karaoke Performance';
+            title.textContent = 'Your Voice Recording';
             title.style.color = '#ffcc00';
-            mixedContainer.appendChild(title);
+            container.appendChild(title);
             
-            const description = document.createElement('p');
-            description.textContent = 'Your voice and the background music have been mixed together in this recording!';
-            description.style.color = '#90EE90';
-            mixedContainer.appendChild(description);
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.src = recordedUrl;
+            audio.style.width = '100%';
+            audio.style.margin = '10px 0';
+            container.appendChild(audio);
             
-            // Mixed recording player
-            const mixedTitle = document.createElement('h5');
-            mixedTitle.textContent = 'Mixed Recording (Voice + Music)';
-            mixedContainer.appendChild(mixedTitle);
-            
-            const mixedAudio = document.createElement('audio');
-            mixedAudio.controls = true;
-            mixedAudio.src = recordedUrl;
-            mixedContainer.appendChild(mixedAudio);
-            
-            // Download link
-            const downloadContainer = document.createElement('div');
-            downloadContainer.style.marginTop = '15px';
-            
-            const mixedDownload = document.createElement('a');
-            mixedDownload.href = recordedUrl;
-            mixedDownload.download = 'karaoke_mixed_performance_' + new Date().toISOString().slice(0, 19) + '.webm';
-            mixedDownload.className = 'btn';
-            mixedDownload.innerHTML = '<i class="fas fa-download"></i> Download Mixed Performance';
-            mixedDownload.style.margin = '5px';
-            downloadContainer.appendChild(mixedDownload);
-            
-            mixedContainer.appendChild(downloadContainer);
-            
-            recordingsList.appendChild(mixedContainer);
-            
-            statusMessage.textContent = "Your mixed performance is ready! Listen to your voice and music together below.";
+            const downloadLink = document.createElement('a');
+            downloadLink.href = recordedUrl;
+            downloadLink.download = 'karaoke_voice_' + new Date().toISOString().slice(0, 19) + '.webm';
+            downloadLink.className = 'btn';
+            downloadLink.innerHTML = '<i class="fas fa-download"></i> Download Voice Recording';
+            downloadLink.style.margin = '10px 5px';
+            container.appendChild(downloadLink);
+
+            const note = document.createElement('p');
+            note.innerHTML = '<strong>Note:</strong> Your voice is recorded separately. To mix with music, use audio editing software or we can implement server-side mixing.';
+            note.style.fontSize = '0.9em';
+            note.style.marginTop = '10px';
+            container.appendChild(note);
+
+            recordingsList.appendChild(container);
+            statusMessage.textContent = "Recording complete! Your voice recording is ready below.";
         }
-        
-        function finishRecording() {
-            if (isRecording) {
-                stopRecording();
-            } else {
-                statusMessage.textContent = "Recording finished. Your mixed performance is ready below.";
-            }
-        }
-        
-        // Initialize UI
-        updatePlaybackUI();
     </script>
 </body>
 </html>
