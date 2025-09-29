@@ -324,7 +324,7 @@
             <div class="player" id="player" style="display: none;">
                 <div class="status-message" id="statusMessage">Ready to sing! Click the red microphone button to start recording.</div>
                 <div class="recording-indicator" id="recordingIndicator">
-                    <i class="fas fa-circle"></i> Recording in progress... You can hear the music while singing!
+                    <i class="fas fa-circle"></i> Recording in progress... Music and voice are being mixed together!
                 </div>
                 
                 <div class="volume-controls">
@@ -376,7 +376,6 @@
         let backgroundGain;
         let microphoneSource;
         let microphoneGain;
-        let destinationStream;
         let mixedDestination;
         let mediaRecorder;
         let recordedChunks = [];
@@ -537,13 +536,16 @@
             backgroundGain = audioContext.createGain();
             microphoneGain = audioContext.createGain();
             
+            // Create mixed destination for recording
+            mixedDestination = audioContext.createMediaStreamDestination();
+            
             // Set initial volumes
             updateMusicVolume();
             updateVoiceVolume();
             
-            // Connect both sources to the destination
+            // Connect background music to both output and mixed destination
             backgroundGain.connect(audioContext.destination);
-            // Note: microphoneGain will be connected when recording starts
+            backgroundGain.connect(mixedDestination);
         }
         
         function updateMusicVolume() {
@@ -715,12 +717,13 @@
                 // Create MediaStreamSource from microphone
                 microphoneSource = audioContext.createMediaStreamSource(stream);
                 
-                // Connect microphone to gain node and then to output
+                // Connect microphone to both output and mixed destination
                 microphoneSource.connect(microphoneGain);
-                microphoneGain.connect(audioContext.destination);
+                microphoneGain.connect(audioContext.destination); // For monitoring
+                microphoneGain.connect(mixedDestination); // For recording
                 
-                // Set up MediaRecorder for capturing only the microphone
-                mediaRecorder = new MediaRecorder(stream);
+                // Set up MediaRecorder to capture the mixed stream (music + voice)
+                mediaRecorder = new MediaRecorder(mixedDestination.stream);
                 recordedChunks = [];
                 
                 mediaRecorder.ondataavailable = function(e) {
@@ -730,7 +733,7 @@
                 };
                 
                 mediaRecorder.onstop = function() {
-                    // Disconnect microphone from output when recording stops
+                    // Disconnect microphone when recording stops
                     if (microphoneSource) {
                         microphoneSource.disconnect();
                         microphoneGain.disconnect();
@@ -748,7 +751,7 @@
                 recordBtn.innerHTML = '<i class="fas fa-square"></i>';
                 recordBtn.title = "Stop Recording";
                 recordingIndicator.style.display = 'block';
-                statusMessage.textContent = "Recording started! You can hear the music while singing along.";
+                statusMessage.textContent = "Recording started! Music and voice are being mixed together in the recording.";
                 
             })
             .catch(function(err) {
@@ -777,7 +780,7 @@
                 recordBtn.innerHTML = '<i class="fas fa-microphone"></i>';
                 recordBtn.title = "Start Recording";
                 recordingIndicator.style.display = 'none';
-                statusMessage.textContent = "Recording stopped. Processing your performance...";
+                statusMessage.textContent = "Recording stopped. Processing your mixed performance...";
                 
                 // Process the recording
                 setTimeout(processRecording, 500);
@@ -791,11 +794,8 @@
             }
             
             // Create a blob from the recorded chunks
-            const blob = new Blob(recordedChunks, { type: 'audio/wav' });
+            const blob = new Blob(recordedChunks, { type: 'audio/webm' });
             const recordedUrl = URL.createObjectURL(blob);
-            
-            // Create download link for the raw recording
-            createRecordingDownloadLink(recordedUrl, "raw_recording");
             
             // Create mixed performance display
             createMixedPerformance(recordedUrl);
@@ -806,72 +806,49 @@
             mixedContainer.className = 'merged-track';
             
             const title = document.createElement('h4');
-            title.textContent = 'Your Karaoke Performance';
+            title.textContent = 'Your Mixed Karaoke Performance';
             title.style.color = '#ffcc00';
             mixedContainer.appendChild(title);
             
             const description = document.createElement('p');
-            description.textContent = 'Your voice has been recorded. The background music was playing during recording but is not mixed into this file.';
+            description.textContent = 'Your voice and the background music have been mixed together in this recording!';
+            description.style.color = '#90EE90';
             mixedContainer.appendChild(description);
             
-            // Voice recording player
-            const voiceTitle = document.createElement('h5');
-            voiceTitle.textContent = 'Your Voice Recording';
-            mixedContainer.appendChild(voiceTitle);
+            // Mixed recording player
+            const mixedTitle = document.createElement('h5');
+            mixedTitle.textContent = 'Mixed Recording (Voice + Music)';
+            mixedContainer.appendChild(mixedTitle);
             
-            const voiceAudio = document.createElement('audio');
-            voiceAudio.controls = true;
-            voiceAudio.src = recordedUrl;
-            mixedContainer.appendChild(voiceAudio);
+            const mixedAudio = document.createElement('audio');
+            mixedAudio.controls = true;
+            mixedAudio.src = recordedUrl;
+            mixedContainer.appendChild(mixedAudio);
             
-            // Download links
+            // Download link
             const downloadContainer = document.createElement('div');
             downloadContainer.style.marginTop = '15px';
             
-            const voiceDownload = document.createElement('a');
-            voiceDownload.href = recordedUrl;
-            voiceDownload.download = 'karaoke_voice_' + new Date().toISOString().slice(0, 19) + '.wav';
-            voiceDownload.className = 'btn btn-secondary';
-            voiceDownload.innerHTML = '<i class="fas fa-download"></i> Download Voice Recording';
-            voiceDownload.style.margin = '5px';
-            downloadContainer.appendChild(voiceDownload);
+            const mixedDownload = document.createElement('a');
+            mixedDownload.href = recordedUrl;
+            mixedDownload.download = 'karaoke_mixed_performance_' + new Date().toISOString().slice(0, 19) + '.webm';
+            mixedDownload.className = 'btn';
+            mixedDownload.innerHTML = '<i class="fas fa-download"></i> Download Mixed Performance';
+            mixedDownload.style.margin = '5px';
+            downloadContainer.appendChild(mixedDownload);
             
             mixedContainer.appendChild(downloadContainer);
             
             recordingsList.appendChild(mixedContainer);
             
-            statusMessage.textContent = "Your performance is ready! Listen to your recording below.";
-        }
-        
-        function createRecordingDownloadLink(url, type) {
-            const li = document.createElement('div');
-            li.className = 'merged-track';
-            
-            const title = document.createElement('h4');
-            title.textContent = 'Your Recording';
-            li.appendChild(title);
-            
-            const audio = document.createElement('audio');
-            audio.controls = true;
-            audio.src = url;
-            li.appendChild(audio);
-            
-            const downloadLink = document.createElement('a');
-            downloadLink.href = url;
-            downloadLink.download = 'karaoke_recording_' + new Date().toISOString().slice(0, 19) + '.wav';
-            downloadLink.className = 'btn btn-secondary';
-            downloadLink.innerHTML = '<i class="fas fa-download"></i> Download Recording';
-            downloadLink.style.margin = '10px 5px';
-            li.appendChild(downloadLink);
-            
-            recordingsList.appendChild(li);
+            statusMessage.textContent = "Your mixed performance is ready! Listen to your voice and music together below.";
         }
         
         function finishRecording() {
             if (isRecording) {
                 stopRecording();
             } else {
-                statusMessage.textContent = "Recording finished. Your performance is ready below.";
+                statusMessage.textContent = "Recording finished. Your mixed performance is ready below.";
             }
         }
         
